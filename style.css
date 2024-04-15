@@ -6,6 +6,10 @@
     user-select: none;
 }
 
+body {
+    overflow-x: auto;
+}
+
 header {
     margin-bottom: 100px;
     position: relative;
@@ -37,6 +41,7 @@ header {
 .nav {
     position: relative;
     display: flex;
+    padding: 20px;
 }
 
 .nav__list {
@@ -52,7 +57,7 @@ header {
 
 .nav__items {
 cursor: pointer;
-text-wrap: nowrap;
+/*text-wrap: nowrap;*/
 &:hover {
     text-decoration: underline;
     }
