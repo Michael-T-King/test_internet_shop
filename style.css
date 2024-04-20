@@ -18,30 +18,17 @@ header {
 }
 
 .container {
+    display: flex;
     position: relative;
     margin: 0 auto;
     width: 1440px;
     width: 100dvh;
 }
 
-.home {
-    position: relative;
-    display: inline-flex;
-    text-decoration: none;
-    color: #000;
-    font-size: 24px;
-    top: 55%;
-    margin-left: 300px;
-    margin-right: 100px;
-    &:hover {
-        text-decoration: underline;
-        }
-}
-
 .nav {
     position: relative;
     display: flex;
-    padding: 20px;
+    padding: 0 20px;
 }
 
 .nav__list {
@@ -57,21 +44,70 @@ header {
 
 .nav__items {
 cursor: pointer;
-/*text-wrap: nowrap;*/
+text-wrap: nowrap;
 &:hover {
     text-decoration: underline;
     }
 }
+
 .nav__items a {
     text-decoration: none;
     color: #000;
 }
 
-main {
+.cart {
+    display: flex;
+    height: 100px;
+    position: relative;
+    margin-left: 100px;
+    list-style: none;
+    border: none;
+    align-items: center;
+    background-color: transparent;
+    cursor: pointer;
+}
 
+.counter__cart {
+    position: absolute;
+    left: 25px;
+    top: 30px;
+    color: #f00;
+}
+
+.cart span {
+    display: flex;
+    position: relative;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover{
+        animation: rotate 3s linear infinite;
+    }
+
+    &:active {
+        color: #f00;
+    }
+}
+    
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+
+main {
+position: relative;
+    .container {
+        display: block;
+    }
 }
 
 #sort__price {
+    display: block;
     position: relative;
     margin-bottom: 30px;
     list-style: none;
@@ -79,12 +115,12 @@ main {
     height: 30px;
     border-radius: 10px;
     font-size: 20px;
+    justify-content: center;
 
     &:hover {
     box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.5);  
     }
 }
-
 
 .products {
     display: flex;
@@ -124,6 +160,13 @@ main {
 .card__title {
     font-size: 18px;
 }
+.card__price {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+
+}
 
 .card__category {
     margin-bottom: 10px;
@@ -143,6 +186,7 @@ main {
     background-color: #ede2d5;
     font-size: 18px;
     cursor: pointer;
+    margin-bottom: 10px;
     &:hover{
         box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.5);
     }
@@ -150,4 +194,137 @@ main {
     &:active {
         background-color: #f6f1ed;
     }
+}
+
+.cart__box{
+    position: fixed;
+    width: 50%;
+    height: 100dvh;
+    right: 0;
+    top: 0;
+    background: #80808090;
+    display: none;
+    gap: 20px;
+    flex-direction: column;
+    overflow-y: auto;
+}
+.cart__box.active{
+    display: flex;
+ 
+}
+
+.cart__box-header {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    height: 70px;
+    width: 100%;
+    background-color: #fff;
+    align-items: center;
+    border: 1px solid #000;
+    padding: 0 20px;
+}
+
+.cart__checkbox-all {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+.close__cart {
+    display: block;
+    position: relative;
+ width: 30px;
+ height: 15px;
+    font-size: 10px;
+}
+
+.cart__product-box {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.cart__product {
+    position: relative;
+    display: flex;
+    height: 120px;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #000;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.cart__checkbox {
+    position: relative;
+    margin-left: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.cart__product-img {
+    width: 100px;
+    height: 100px;
+}
+
+.cart__product-title {
+    width: 50%;
+    font-size: 20px;
+}
+
+.cart__product-price {
+    color: #f00;
+}
+
+.product__counter-box {
+display: flex;
+position: relative;
+width: 100px;
+border-radius: 10px;
+height: 30px;
+background-color: #888;
+margin-right: 20px;
+justify-content: space-between;
+}
+
+.btns__counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.product__counter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #fff;
+    width: 30px;
+    height: 30px;
+
+}
+
+.cart__box-footer {
+    display: flex;
+    position: relative;
+    flex-shrink: 0;
+    height: 70px;
+    width: 100%;
+    background-color: #fff;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border: 1px solid #000;
+}
+
+.buttons__cart-order {
+    display: flex;
+    gap: 10px;
 }

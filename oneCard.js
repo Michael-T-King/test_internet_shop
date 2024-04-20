@@ -7,9 +7,9 @@ fetch(`https://fakestoreapi.com/products/${id}`)
     .then((json) => {
         product.innerHTML = `
         <div class = "card">
-      
+    
         <img src ="${json.image}" class ="card__img" alt = "image">
-      <div class = "description__box">
+    <div class = "description__box">
         <h2 class ="card__title">${json.title}</h2>
         <h3 class = "card__category">${json.category}</h3>
         <p class = "description">${json.description}</p>

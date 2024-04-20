@@ -7,6 +7,7 @@
 }
 
 .container {
+    display: flex;
     position: relative;
     margin: 0 auto;
     width: 1240px;
@@ -34,6 +35,46 @@
     text-decoration: none;
     color: #000;
 }
+
+.cart {
+    display: flex;
+    height: 100px;
+    position: relative;
+    margin-left: 100px;
+    margin-left: 100%;
+    margin-right: 20px;
+}
+
+.counter__cart {
+    position: absolute;
+    left: 25px;
+    top: 30px;
+    color: #f00;
+}
+
+.cart span {
+    display: flex;
+    position: relative;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover{
+        animation: rotate 3s linear infinite;
+    }
+
+    &:active {
+        color: #f00;
+    }
+}
+    
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 
 main {
 

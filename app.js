@@ -1,14 +1,190 @@
 let products = document.querySelector('.products');
 let category = document.querySelectorAll('.nav__items');
 let sortPrice = document.querySelector('select');
+ let cartBtn = document.querySelector('.cart');
+ let counterCart = document.querySelector('.counter__cart');
+ let cartBox = document.querySelector('.cart__box');
 
+
+let cart = [];
 let flagBtn = 'all';
 let sort = 'default';
+let productCounter = 0;
+let same = 0;
+let counterCheck =0;
+let totalPriceSum =0;
+
+let putProductToCart = () => {
+    cartBox.innerHTML = ` 
+    <div class="cart__box-header">
+    <input type="checkbox" class="cart__checkbox-all">
+    <button class="close__cart">Close</button>
+    </div>
+    <div class="cart__product-box"></div>
+    <div class="cart__box-footer">
+        <h3 class="count__product"><span class="count__product-number">0</span>:товаров к оформлению</h3>
+        <h2>общая сумма: <span class="total__price">0$</span></h2>
+        <div class = "buttons__cart-order">
+        <button class="order">оформить заказ</button>
+        <button class="delete__order">delete</button>
+        </div>
+    </div>
+    `;
+
+    counterCart.textContent = cart.length;
+    let cartClose = document.querySelector('.close__cart');
+    cartClose.addEventListener('click', ()=>{
+        cartBox.classList.remove('active');
+    });
+
+    const cartProductContainer = document.querySelector('.cart__product-box');
+
+    cart.forEach((el) => {
+    cartProductContainer.innerHTML += `
+        <div class="cart__product">
+        <input type="checkbox" class="cart__checkbox" data-id="${el.id}" ${el.checked ? 'checked' : ''}>
+        <a href="oneCard.html#${el.id}">
+        <img src="${el.image}" class="cart__product-img" alt="image">
+        </a>
+        <h2 class="cart__product-title">${el.title}</h2>
+        <h2 class="cart__product-price">${el.price.toFixed(2)}$</h2>
+        <div class="product__counter-box">
+        <btn class="product__counter-less btns__counter" data-id="${el.id}">-</btn>
+        <h2 class="product__counter">${el.productCounter}</h2>
+        <btn class="product__counter-more btns__counter" data-id="${el.id}">+</btn>
+        </div>
+        </div>
+    `;
+    });
+
+    let counterLess = document.querySelectorAll('.product__counter-less');
+    let counterMore = document.querySelectorAll('.product__counter-more');
+
+    counterLess.forEach((item) => {
+    item.addEventListener('click', () => {
+        let productId = parseInt(item.dataset.id);
+        let product = cart.find((el) => el.id === productId);
+        if (product) {
+        if (product.productCounter > 1) {
+            let previousCounter = product.productCounter;
+            product.productCounter--;
+            product.price = (product.price / previousCounter) * product.productCounter;
+            putProductToCart();
+            }
+        }
+    });
+});
+
+    counterMore.forEach((item) => {
+    item.addEventListener('click', () => {
+        let productId = parseInt(item.dataset.id);
+        let product = cart.find((el) => el.id === productId);
+        if (product) {
+        let previousCounter = product.productCounter;
+        product.productCounter++;
+        product.price = (product.price * product.productCounter) / previousCounter;
+        putProductToCart();
+            }
+        });
+    });
+
+
+    let cartCheckboxAll = document.querySelector('.cart__checkbox-all');
+    let cartCheckbox = document.querySelectorAll('.cart__checkbox');
+    let countProductNumber = document.querySelector('.count__product-number');
+    let totalPrice = document.querySelector('.total__price');
+    let totalPriceArr = [];
+    let deleteOrder = document.querySelector('.delete__order');
+    
+    cartCheckbox.forEach(item => {
+        let productId = parseInt(item.dataset.id);
+        let product = cart.find(el => el.id === productId);
+        item.addEventListener('change', (event) => {
+            event.preventDefault();
+            if (event.target.checked) {
+                console.log('check');
+                if (product) {                    
+                    counterCheck++;
+                    product.checked = true;
+                    countProductNumber.textContent = counterCheck;
+                    totalPriceArr.push(product.price);
+                    totalPriceSum = totalPriceArr.reduce((acc, el, idx) => {
+                        return acc + el;
+                    }, 0);
+                    totalPrice.textContent = totalPriceSum;
+                    deleteOrder.addEventListener('click',()=>{
+                        cart = cart.filter(item => item.id !== productId);
+                        putProductToCart();
+                    });
+                }
+            } else {
+                console.log('uncheck');
+                if (product) {
+                    product.checked = false;
+                    counterCheck--;
+                    countProductNumber.textContent = counterCheck;
+                    totalPriceArr = totalPriceArr.filter(price => price !== product.price);
+                    totalPriceSum = totalPriceArr.reduce((acc, el, idx) => {
+                        return acc + el;
+                    }, 0);
+                    totalPrice.textContent = totalPriceSum;
+                }
+            }
+            const cartCheckboxToArray = [...cartCheckbox];
+            if(cartCheckboxToArray.some(item => !item.checked)){
+                cartCheckboxAll.checked = !cartCheckboxToArray.some(item => !item.checked);
+            }
+                else if (cartCheckboxToArray.every(item => item.checked)) {
+                    cartCheckboxAll.checked = cartCheckboxToArray.every(item => item.checked);
+            }
+        });
+    });
+
+    cartCheckboxAll.addEventListener('change', (event) => {
+        const isChecked = event.target.checked;
+    
+        cartCheckbox.forEach(item => {
+            item.checked = isChecked;
+            let productId = parseInt(item.dataset.id);
+            let product = cart.find(el => el.id === productId);
+    
+            if (isChecked) {
+                if (product && !product.checked) {
+                    counterCheck++;
+                    product.checked = true;
+                    totalPriceArr.push(product.price);
+                }
+            } else {
+                if (product && product.checked) {
+                    counterCheck--;
+                    product.checked = false;
+                    totalPriceArr = totalPriceArr.filter(price => price !== product.price);
+                }
+            }
+        });
+    
+        deleteOrder.addEventListener('click', () => {
+            const checkedProducts = cart.filter(item => item.checked);
+            cart = cart.filter(item => !item.checked);
+            putProductToCart();
+        });
+    
+        countProductNumber.textContent = counterCheck;
+        totalPriceSum = totalPriceArr.reduce((acc, el) => acc + el, 0);
+        totalPrice.textContent = totalPriceSum;
+    });
+
+};
+
+
+
 let showProducts = () => {
     fetch (`https://fakestoreapi.com/products${flagBtn === 'all' ? '': '/category/'+flagBtn}`)
     .then ((res) => res.json())
     .then((json) =>{
         products.innerHTML = '';
+        
+
         json.sort((a,b)=>{
             if(sort === 'default') {
                 return json;
@@ -31,23 +207,58 @@ let showProducts = () => {
             <div class = "card__price">
             <h3 class = "card__category">${el.category}</h3>
             <h2 class="card__price-price">${el.price}$</h2>
-            <button class ="card__buy-btn">Buy</button>
+            <button data-id = "${el.id}" class ="card__buy-btn">Buy</button>
             </div>
             </div> `;
         });
+
+        let addToCart = document.querySelectorAll('.card__buy-btn');
+
+        addToCart.forEach((el) => {
+            let find = json.find(item => item.id === +el.dataset.id);        
+            let sameID = cart.find(item => item.id === find.id);
+
+            
+            el.addEventListener('click', () => {
+
+    
+            if (sameID) {
+                sameID.productCounter = (sameID.productCounter || 1) + 1;
+            } else {
+                find.productCounter = 1;
+                cart.push(find);
+            }
+            
+            putProductToCart();
+            showProducts();
+            });
+            
+        });
     });
 }
+
+
+
 category.forEach((el)=>{
     el.addEventListener('click', ()=>{
     flagBtn = el.textContent;
     console.log(flagBtn);
-showProducts();
+    
+    showProducts();
+
     });
 });
 sortPrice.addEventListener('change',(event)=>{
     sort = event.target.value
     console.log(sort)
-    showProducts()
+    showProducts();
 });
+
+cartBtn.addEventListener('click',()=>{
+    cartBox.classList.toggle('active');
+})
+
+
 showProducts();
+putProductToCart();
 
