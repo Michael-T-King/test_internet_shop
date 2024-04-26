@@ -1,10 +1,9 @@
 let products = document.querySelector('.products');
 let category = document.querySelectorAll('.nav__items');
 let sortPrice = document.querySelector('select');
- let cartBtn = document.querySelector('.cart');
- let counterCart = document.querySelector('.counter__cart');
- let cartBox = document.querySelector('.cart__box');
-
+let cartBtn = document.querySelector('.cart');
+let counterCart = document.querySelector('.counter__cart');
+let cartBox = document.querySelector('.cart__box');
 
 let cart = [];
 let flagBtn = 'all';
@@ -13,6 +12,7 @@ let productCounter = 0;
 let same = 0;
 let counterCheck =0;
 let totalPriceSum =0;
+let totalPriceArr = [];
 
 let putProductToCart = () => {
     cartBox.innerHTML = ` 
@@ -22,12 +22,12 @@ let putProductToCart = () => {
     </div>
     <div class="cart__product-box"></div>
     <div class="cart__box-footer">
-        <h3 class="count__product"><span class="count__product-number">0</span>:товаров к оформлению</h3>
-        <h2>общая сумма: <span class="total__price">0$</span></h2>
-        <div class = "buttons__cart-order">
-        <button class="order">оформить заказ</button>
-        <button class="delete__order">delete</button>
-        </div>
+    <h3 class="count__product"><span class="count__product-number">0</span>:товаров к оформлению</h3>
+    <h2>общая сумма: <span class="total__price">0$</span></h2>
+    <div class = "buttons__cart-order">
+    <button class="order">оформить заказ</button>
+    <button class="delete__order">delete</button>
+    </div>
     </div>
     `;
 
@@ -46,8 +46,10 @@ let putProductToCart = () => {
         <a href="oneCard.html#${el.id}">
         <img src="${el.image}" class="cart__product-img" alt="image">
         </a>
+        <a href="oneCard.html#${el.id}" class = "oneCardCart">
         <h2 class="cart__product-title">${el.title}</h2>
         <h2 class="cart__product-price">${el.price.toFixed(2)}$</h2>
+        </a>
         <div class="product__counter-box">
         <btn class="product__counter-less btns__counter" data-id="${el.id}">-</btn>
         <h2 class="product__counter">${el.productCounter}</h2>
@@ -56,6 +58,8 @@ let putProductToCart = () => {
         </div>
     `;
     });
+
+  
 
     let counterLess = document.querySelectorAll('.product__counter-less');
     let counterMore = document.querySelectorAll('.product__counter-more');
@@ -74,7 +78,6 @@ let putProductToCart = () => {
         }
     });
 });
-
     counterMore.forEach((item) => {
     item.addEventListener('click', () => {
         let productId = parseInt(item.dataset.id);
@@ -88,46 +91,38 @@ let putProductToCart = () => {
         });
     });
 
-
     let cartCheckboxAll = document.querySelector('.cart__checkbox-all');
     let cartCheckbox = document.querySelectorAll('.cart__checkbox');
     let countProductNumber = document.querySelector('.count__product-number');
     let totalPrice = document.querySelector('.total__price');
-    let totalPriceArr = [];
+
     let deleteOrder = document.querySelector('.delete__order');
-    
     cartCheckbox.forEach(item => {
         let productId = parseInt(item.dataset.id);
         let product = cart.find(el => el.id === productId);
         item.addEventListener('change', (event) => {
             event.preventDefault();
             if (event.target.checked) {
-                console.log('check');
                 if (product) {                    
                     counterCheck++;
                     product.checked = true;
                     countProductNumber.textContent = counterCheck;
                     totalPriceArr.push(product.price);
-                    totalPriceSum = totalPriceArr.reduce((acc, el, idx) => {
-                        return acc + el;
-                    }, 0);
-                    totalPrice.textContent = totalPriceSum;
+                    totalPriceSum = totalPriceArr.reduce((acc, el) => acc + el, 0);
+        totalPrice.textContent = `${totalPriceSum}$`;
                     deleteOrder.addEventListener('click',()=>{
                         cart = cart.filter(item => item.id !== productId);
                         putProductToCart();
                     });
                 }
             } else {
-                console.log('uncheck');
                 if (product) {
                     product.checked = false;
                     counterCheck--;
                     countProductNumber.textContent = counterCheck;
                     totalPriceArr = totalPriceArr.filter(price => price !== product.price);
-                    totalPriceSum = totalPriceArr.reduce((acc, el, idx) => {
-                        return acc + el;
-                    }, 0);
-                    totalPrice.textContent = totalPriceSum;
+                    totalPriceSum = totalPriceArr.reduce((acc, el) => acc + el, 0);
+                    totalPrice.textContent = `${totalPriceSum}$`;
                 }
             }
             const cartCheckboxToArray = [...cartCheckbox];
@@ -164,19 +159,17 @@ let putProductToCart = () => {
         });
     
         deleteOrder.addEventListener('click', () => {
-            const checkedProducts = cart.filter(item => item.checked);
+            let checkedProducts = cart.filter(item => item.checked);
             cart = cart.filter(item => !item.checked);
             putProductToCart();
         });
     
         countProductNumber.textContent = counterCheck;
         totalPriceSum = totalPriceArr.reduce((acc, el) => acc + el, 0);
-        totalPrice.textContent = totalPriceSum;
+        totalPrice.textContent = `${totalPriceSum}$`;
     });
 
 };
-
-
 
 let showProducts = () => {
     fetch (`https://fakestoreapi.com/products${flagBtn === 'all' ? '': '/category/'+flagBtn}`)
@@ -184,7 +177,6 @@ let showProducts = () => {
     .then((json) =>{
         products.innerHTML = '';
         
-
         json.sort((a,b)=>{
             if(sort === 'default') {
                 return json;
@@ -216,12 +208,9 @@ let showProducts = () => {
 
         addToCart.forEach((el) => {
             let find = json.find(item => item.id === +el.dataset.id);        
-            let sameID = cart.find(item => item.id === find.id);
-
-            
+            let sameID = cart.find(item => item.id === find.id);           
             el.addEventListener('click', () => {
 
-    
             if (sameID) {
                 sameID.productCounter = (sameID.productCounter || 1) + 1;
             } else {
@@ -237,15 +226,11 @@ let showProducts = () => {
     });
 }
 
-
-
 category.forEach((el)=>{
     el.addEventListener('click', ()=>{
     flagBtn = el.textContent;
-    console.log(flagBtn);
-    
+    console.log(flagBtn);    
     showProducts();
-
     });
 });
 sortPrice.addEventListener('change',(event)=>{
@@ -258,7 +243,60 @@ cartBtn.addEventListener('click',()=>{
     cartBox.classList.toggle('active');
 })
 
-
 showProducts();
 putProductToCart();
 
+
+let left = document.querySelector('.left__img');
+let right = document.querySelector('.right__img');
+let paralaxContainer = document.querySelector('.paralax__container');
+let titleImg = document.querySelector('.title__img');
+
+
+window.addEventListener('scroll',(e)=>{
+    let scroll = window.scrollY;
+    let darkness = Math.min(scroll / 500, 1);
+    let darknessblack = 10;
+     darknessblack = darknessblack - Math.max(scroll /100, 1);
+     if(darknessblack < 0) darknessblack =0;
+    let colorBack =  "#777777" + Math.round(darknessblack *10) + "1";
+    let color = "#777777" + Math.round(darkness * 10) + "1";
+    console.log(scroll);
+    
+
+    if(scroll < 550){
+
+//console.log(scroll);
+    left.style.left = -scroll + 685   +'px';
+    left.style.top = scroll + 100  +'px'
+    left.style.width = (scroll/40) + 20 + 'em';
+    right.style.right = -scroll + 685  + 'px';
+    right.style.top = scroll + 100  +'px';
+    right.style.width = (scroll/40) + 20 + 'em';
+
+    titleImg.style.opacity = (scroll/5)/100;
+    titleImg.style.top = scroll + 180  +'px';
+    paralaxContainer.style.backgroundColor = color;
+    }
+
+    let  cartMove = document.querySelector(".cart__move");
+    if (scroll >= 550) {
+        cartMove.classList.add("animate");
+      } else {
+        cartMove.classList.remove("animate");
+      }
+
+    if(scroll >=650){
+        paralaxContainer.style.backgroundColor = colorBack;
+        right.style.opacity = `0.${darknessblack}`;
+        left.style.opacity = `0.${darknessblack}`;
+    }
+    else {
+        right.style.opacity = '1';
+        left.style.opacity =  '1';
+    }
+
+
+    
+
+});
